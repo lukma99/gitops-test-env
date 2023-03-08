@@ -35,9 +35,13 @@ fi
 echo "Creating cluster release-promotion-cluster"
 k3d cluster create release-promotion-cluster \
   --image rancher/k3s:${K3S_VERSION} \
-  --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
   --k3s-arg "--disable=traefik@server:*" \
-  --network host
+  --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
+  -p "9000:9000@server:*" \
+  -p "9001:9001@server:*" \
+  -p "9002:9002@server:*" \
+  -p "9003:9003@server:*" \
+  -p "9004:9004@server:*" \
 
 # check if current context switched correctly to the new one, to prevent installation of Argo CD
 # in different clusters, when something went wrong
