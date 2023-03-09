@@ -21,7 +21,7 @@ jobs:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ secrets.GH_TOKEN }}
         run: |
-          docker login ghcr.io -u $REGISTRY_USER -p $REGISTRY_PASSWORD
+          echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
 
       - name: Build and Push Docker Image
         env:
