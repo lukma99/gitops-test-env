@@ -1,0 +1,31 @@
+name: Build and Push Docker Image
+
+on:
+  # run pipeline manually
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        description: 'Docker Tag'
+        required: true
+        type: string
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Registry
+        env:
+          DOCKER_USER: ${{ github.actor }}
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker login ghcr.io -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+      - name: Build and Push Docker Image
+        env:
+          DOCKER_TAG: ${{ inputs.docker_tag }}
+        run: |
+          docker build -t ghcr.io/gitops-test-env-app:${DOCKER_TAG} -t ghcr.io/gitops-test-env-app:latest ./app
+          docker push ghcr.io/gitops-test-env-app
