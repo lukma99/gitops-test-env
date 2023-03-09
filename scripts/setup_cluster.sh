@@ -9,7 +9,7 @@ K3D_ARGS=(
   # Specify k3s (and therefore k8s) version
   "--image rancher/k3s:${K3S_VERSION}"
   # Allow ports less than 30000
- # '--k3s-arg= "--kube-apiserver-arg=service-node-port-range=8010-32767"'
+  # '--k3s-arg= "--kube-apiserver-arg=service-node-port-range=8010-32767"'
   '--k3s-arg "--service-node-port-range=8010-65535@servers:*"'
   # Disable traefik
   '--k3s-arg "--disable=traefik@server:*"'
@@ -32,16 +32,22 @@ if ! command -v k3d >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Creating cluster release-promotion-cluster"
-k3d cluster create release-promotion-cluster \
-  --image rancher/k3s:${K3S_VERSION} \
-  --k3s-arg "--disable=traefik@server:*" \
-  --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
-  -p "9000:9000@server:*" \
-  -p "9001:9001@server:*" \
-  -p "9002:9002@server:*" \
-  -p "9003:9003@server:*" \
-  -p "9004:9004@server:*" \
+if ! k3d cluster get release-promotion-cluster >/dev/null 2>&1; then
+  echo "Creating cluster release-promotion-cluster"
+  k3d cluster create release-promotion-cluster \
+    --image rancher/k3s:${K3S_VERSION} \
+    --k3s-arg "--disable=traefik@server:*" \
+    --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
+    -p "9000:9000@server:*" \
+    -p "9001:9001@server:*" \
+    -p "9002:9002@server:*" \
+    -p "9003:9003@server:*" \
+    -p "9004:9004@server:*"
+else
+  echo "Cluster release-promotion-cluster already exists, skipping creation"
+fi
+
+kubectl config set-context k3d-release-promotion-cluster
 
 # check if current context switched correctly to the new one, to prevent installation of Argo CD
 # in different clusters, when something went wrong
@@ -58,7 +64,7 @@ kubectl create namespace argocd
 
 echo "Installing Argo CD"
 helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
+helm repo update argo
 helm upgrade --install \
   --namespace argocd \
   --version ${ARGO_HELM_CHART_VERSION} \
