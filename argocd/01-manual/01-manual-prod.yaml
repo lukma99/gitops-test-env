@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/lukma99/gitops-test-env
-    path: k8s-deployments/01-manual/environments/prod
+    path: k8s-deployments/01-manual/overlays/production
     targetRevision: main
   syncPolicy:
     automated:

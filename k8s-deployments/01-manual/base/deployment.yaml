@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 01-manual
+spec:
+  replicas: SPECIFIED_BY_OVERLAYS
+  template:
+    spec:
+      containers:
+        - name: gitops-test-env
+          image: ghcr.io/lukma99/gitops-test-env:SPECIFIED_BY_OVERLAYS
+          ports:
+            - containerPort: 80

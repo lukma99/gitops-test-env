@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/lukma99/gitops-test-env
-    path: k8s-deployments/02-ci-pipeline/environments/qa
+    path: k8s-deployments/02-ci-pipeline/overlays/qa
     targetRevision: main
   syncPolicy:
     automated:
