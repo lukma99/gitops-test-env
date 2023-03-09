@@ -29,8 +29,7 @@ jobs:
           IMAGE_TAG: ${{ inputs.docker_tag }}
         run: |
           docker build \
-            -t ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
-            -t ghcr.io/${IMAGE_NAME}:latest \
+            --tag ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
             --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
             ./app
           docker push ghcr.io/${IMAGE_NAME}
