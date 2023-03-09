@@ -38,11 +38,9 @@ if ! k3d cluster get release-promotion-cluster >/dev/null 2>&1; then
     --image rancher/k3s:${K3S_VERSION} \
     --k3s-arg "--disable=traefik@server:*" \
     --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
-    -p "9000:9000@server:*" \
-    -p "9001:9001@server:*" \
-    -p "9002:9002@server:*" \
-    -p "9003:9003@server:*" \
-    -p "9004:9004@server:*"
+    -p "9000-9050:9000-9050@server:*"
+
+  sleep 3
 else
   echo "Cluster release-promotion-cluster already exists, skipping creation"
 fi
