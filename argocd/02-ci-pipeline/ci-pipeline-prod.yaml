@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: 02-ci-pipeline-prod
+  name: ci-pipeline-prod
   namespace: argocd
 spec:
   destination:

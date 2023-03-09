@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: 02-ci-pipeline-qa
+  name: manual-prod
   namespace: argocd
 spec:
   destination:
@@ -10,7 +10,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/lukma99/gitops-test-env
-    path: k8s-deployments/02-ci-pipeline/overlays/qa
+    path: k8s-deployments/01-manual/overlays/prod
     targetRevision: main
   syncPolicy:
     automated:

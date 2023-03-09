@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: 02-ci-pipeline-staging
+  name: ci-pipeline-staging
   namespace: argocd
 spec:
   destination:

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: 01-manual-staging
+  name: manual-staging
   namespace: argocd
 spec:
   destination:

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: 01-manual
+  name: manual
 spec:
   replicas: SPECIFIED_BY_OVERLAYS
   template:
