@@ -5,19 +5,6 @@ K3S_VERSION=v1.26.1-k3s1
 # https://artifacthub.io/packages/helm/argo/argo-cd
 ARGO_HELM_CHART_VERSION=5.24.3
 
-K3D_ARGS=(
-  # Specify k3s (and therefore k8s) version
-  "--image rancher/k3s:${K3S_VERSION}"
-  # Allow ports less than 30000
-  # '--k3s-arg= "--kube-apiserver-arg=service-node-port-range=8010-32767"'
-  '--k3s-arg "--service-node-port-range=8010-65535@servers:*"'
-  # Disable traefik
-  '--k3s-arg "--disable=traefik@server:*"'
-  # Disable servicelb (avoids "Pending" svclb pods and we use nodePorts right now anyway)
-  # '--k3s-server-arg=--disable=servicelb'
-  # maybe if ports not accessible
-  # '--network=host'
-)
 
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl binary not found. Please install it first."
