@@ -3,5 +3,11 @@
   "extends": [
     "config:base"
   ],
-  "enabledManagers": ["kustomize"]
+  "enabledManagers": ["kustomize"],
+  "kustomize": {
+    "fileMatch": [
+      "k8s-deployments/02-ci-pipeline/overlays/(^|/)kustomization\\.ya?ml$"
+    ],
+    "pinDigests": false
+  }
 }
