@@ -3,10 +3,5 @@
   "extends": [
     "config:base"
   ],
-  "kubernetes": {
-    "fileMatch": [
-      "(^|/)kustomization\\.ya?ml$"
-    ],
-    "pinDigests": false
-  }
+  "enabledManagers": ["dockerfile"]
 }
