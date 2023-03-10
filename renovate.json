@@ -3,8 +3,10 @@
   "extends": [
     "config:base"
   ],
-  "fileMatch": [
-    "(^|/)kustomization\\.ya?ml$"
-  ],
-  "pinDigests": false
+  "kubernetes": {
+    "fileMatch": [
+      "(^|/)kustomization\\.ya?ml$"
+    ],
+    "pinDigests": false
+  }
 }
