@@ -1,11 +1,16 @@
 name: Renovate Bot
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+    - completed
 #  schedule:
 #    - cron: '0/15 * * * *'
 jobs:
   renovate:
     runs-on: ubuntu-22.04
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
