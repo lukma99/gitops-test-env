@@ -16,4 +16,4 @@ patchesStrategicMerge:
 
 images:
   - name: ghcr.io/lukma99/gitops-test-env
-    newTag: 2.0.1
+    newTag: 2.1.1
