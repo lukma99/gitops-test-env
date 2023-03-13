@@ -1,0 +1,81 @@
+name: Build and Push Docker Image and create PRs
+
+on:
+  # run pipeline manually
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        description: 'Docker Tag'
+        required: true
+        type: string
+      staging:
+        description: 'Open PR for staging'
+        required: true
+        type: boolean
+      qa:
+        description: 'Open PR for qa'
+        required: true
+        type: boolean
+      prod:
+        description: 'Open PR for prod'
+        required: true
+        type: boolean
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Registry
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
+
+      - name: Build and Push Docker Image
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_TAG: ${{ inputs.docker_tag }}
+        run: |
+          docker build \
+            --tag ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
+            --tag ghcr.io/${IMAGE_NAME}:latest \
+            --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
+            ./app
+          docker push --all-tags ghcr.io/${IMAGE_NAME}
+
+  pr-for-staging:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Registry
+        env:
+          REGISTRY_USER: ${{ github.actor }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
+
+      - name: Build and Push Docker Image
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_TAG: ${{ inputs.docker_tag }}
+        run: |
+          docker build \
+            --tag ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
+            --tag ghcr.io/${IMAGE_NAME}:latest \
+            --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
+            ./app
+          docker push --all-tags ghcr.io/${IMAGE_NAME}
+
+      - name: Create Staging PR
+        if: ${{inputs.staging}} == 'true'
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_TAG: ${{ inputs.docker_tag }}
+        run: |
+          git checkout -b staging_${IMAGE_NAME}
