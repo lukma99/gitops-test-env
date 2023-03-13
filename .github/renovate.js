@@ -1,7 +1,7 @@
 module.exports = {
-    "extends": [
-        "config:base"
-    ],
+    // "extends": [
+    //     "config:base"
+    // ],
     "dependencyDashboard": false,
     "platform": "github",
     "username": "renovate-bot",
