@@ -4,8 +4,8 @@ metadata:
   name: image-updater-prod
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: ghcr.io/lukma99/gitops-test-env:~2
-    argocd-image-updater.argoproj.io/ghcr.io/lukma99/gitops-test-env.update-strategy: semver
+    argocd-image-updater.argoproj.io/image-list: gitops-test-env=ghcr.io/lukma99/gitops-test-env:~2
+    argocd-image-updater.argoproj.io/gitops-test-env.update-strategy: semver
 spec:
   destination:
     namespace: prod
