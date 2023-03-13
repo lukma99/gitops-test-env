@@ -6,7 +6,10 @@
   "enabledManagers": ["kustomize"],
   "kustomize": {
     "ignorePaths": [
-      "**/01-manual/**"
+      "**/01-manual/**",
+      "**/02-ci-pipeline/**",
+      "**/03-image-updater/**",
+      "**/05-preview-environments/**"
     ]
   }
 }
