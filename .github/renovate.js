@@ -2,6 +2,7 @@ module.exports = {
     "extends": [
         "config:base"
     ],
+    "dependencyDashboard": false,
     "platform": "github",
     "username": "renovate-bot",
     "gitAuthor": "Renovate Bot <renovate@users.noreply.github.com>",
