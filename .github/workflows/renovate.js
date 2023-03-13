@@ -7,7 +7,7 @@ module.exports = {
     "platform": "github",
     "username": "renovate-bot",
     "gitAuthor": "Renovate Bot <renovate@users.noreply.github.com>",
-    "onboarding": "false",
+    "onboarding": false,
     "repositories": [
         "lukma99/gitops-test-env"
     ],
