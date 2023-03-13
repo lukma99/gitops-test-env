@@ -3,6 +3,11 @@ module.exports = {
     "extends": [
         "config:base"
     ],
+    "platform": "github",
+    "repositories": [
+        "lukma99/gitops-test-env"
+    ],
+
     "enabledManagers": ["kustomize"],
     "kustomize": {
         "ignorePaths": [
