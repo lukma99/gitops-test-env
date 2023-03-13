@@ -4,6 +4,8 @@
 K3S_VERSION=v1.26.1-k3s1
 # https://artifacthub.io/packages/helm/argo/argo-cd
 ARGO_HELM_CHART_VERSION=5.24.3
+# https://artifacthub.io/packages/helm/argo/argocd-image-updater
+ARGO_IMAGE_UPDATER_HELM_CHART_VERSION=0.8.4
 
 
 if ! command -v kubectl >/dev/null 2>&1; then
@@ -58,6 +60,14 @@ helm upgrade --install \
   --set server.service.nodePortHttp=9000 \
   --set server.service.nodePortHttps=9001 \
   argo-cd argo/argo-cd
+
+
+helm upgrade --install \
+  --namespace argocd \
+  --version ${ARGO_IMAGE_UPDATER_HELM_CHART_VERSION} \
+  argocd-image-updater argo/argocd-image-updater
+  #--set config.argocd.serverAddress=argo-cd-argocd-server.argocd.svc.cluster.local \
+  #--set config.argocd.insecure=true \
 
 kubectl apply -f ./argocd/control-app.yaml
 

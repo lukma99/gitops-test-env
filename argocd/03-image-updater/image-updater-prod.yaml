@@ -1,8 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dependency-bot-prod
+  name: image-updater-prod
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: ghcr.io/lukma99/gitops-test-env:~2
+    argocd-image-updater.argoproj.io/ghcr.io/lukma99/gitops-test-env.update-strategy: semver
 spec:
   destination:
     namespace: prod
@@ -10,7 +13,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/lukma99/gitops-test-env
-    path: k8s-deployments/04-dependency-bot/overlays/prod
+    path: k8s-deployments/03-image-updater/overlays/prod
     targetRevision: main
   syncPolicy:
     automated:
