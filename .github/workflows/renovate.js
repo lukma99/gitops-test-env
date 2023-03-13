@@ -4,6 +4,9 @@ module.exports = {
         "config:base"
     ],
     "platform": "github",
+    "username": "renovate-bot",
+    "gitAuthor": "Renovate Bot",
+    "onboarding": "false",
     "repositories": [
         "lukma99/gitops-test-env"
     ],
