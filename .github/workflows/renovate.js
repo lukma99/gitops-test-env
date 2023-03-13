@@ -8,6 +8,7 @@ module.exports = {
     "username": "renovate-bot",
     "gitAuthor": "Renovate Bot <renovate@users.noreply.github.com>",
     "onboarding": false,
+    "dryRun": "full",
     "repositories": [
         "lukma99/gitops-test-env"
     ],
