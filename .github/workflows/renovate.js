@@ -2,7 +2,7 @@ module.exports = {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "config:base",
-        "disableDependencyDashboard"
+        ":disableDependencyDashboard"
     ],
     "platform": "github",
     "username": "renovate-bot",
