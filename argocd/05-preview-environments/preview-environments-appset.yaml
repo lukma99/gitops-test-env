@@ -22,7 +22,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/lukma99/gitops-test-env.git
-        path: k8s-deployments/05-preview-environments/overlays/test
+        path: k8s-deployments/05-preview-environments/overlays/preview
         targetRevision: '{{head_sha}}'
         kustomize:
           #namespace: 'preview-{{branch_slug}}-{{number}}'
