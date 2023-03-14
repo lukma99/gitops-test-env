@@ -26,7 +26,7 @@ spec:
         targetRevision: '{{head_sha}}'
         kustomize:
           #namespace: 'preview-{{branch_slug}}-{{number}}'
-          nameSuffix: '{{branch}}'
+          nameSuffix: '-{{branch_slug}}'
           commonLabels:
             app.kubernetes.io/instance: '{{branch_slug}}-{{number}}'
           images:
