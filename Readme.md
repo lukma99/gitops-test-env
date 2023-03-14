@@ -13,7 +13,7 @@
   * [k3d](https://k3d.io/v5.4.8/#installation) (version 5.x)
 
 ### Installation Steps
-## In GitHub:
+#### In GitHub:
 * Fork this repository
 * Go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and click on `Generate new token (Classic)`. Give it the following scopes, save it and copy your generated token (we will need it in the next few steps):
 ![gh_token_scopes.png](docs/pics/gh_token_scopes.png)
@@ -22,7 +22,7 @@
 ![gh_actions_settings.png](docs/pics/gh_actions_settings.png)
 * After the first pipeline run of "Docker Image Push", change the ghcr visibility to `public`
 
-## On your computer:
+#### On your computer:
 * Clone your fork
 * **In the root path** of the cloned fork, run the following command _(renames all occurences of the original repository or ghcr to yours)_:
 ```bash
