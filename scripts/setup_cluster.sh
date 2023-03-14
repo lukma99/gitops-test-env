@@ -52,15 +52,17 @@ kubectl create namespace prod
 kubectl create namespace argocd
 
 echo
-echo -n "Enter your GitHub Token or press Enter to skip this step:"
+echo -n "Enter your GitHub Username or press Enter to skip this step: "
+read -r GH_USER_NAME
+echo -n "Enter your GitHub Token or press Enter to skip this step: "
 read -r -s GH_TOKEN
 echo
-if [[ $GH_TOKEN != "" ]]; then
+if [[ $GH_TOKEN != "" && $GH_USER_NAME != "" ]]; then
   kubectl delete secret github-repo-creds --namespace argocd
   kubectl create secret generic github-repo-creds --namespace argocd \
     --from-literal=type="git" \
     --from-literal=url="https://github.com/lukma99/gitops-test-env" \
-    --from-literal=username="lukma99" \
+    --from-literal=username="$GH_USER_NAME" \
     --from-literal=password="$GH_TOKEN"
   kubectl label secret github-repo-creds -n argocd argocd.argoproj.io/secret-type=repository
 else
