@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: preview-environments-appset
+  namespace: argocd
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: lukma99
+          repo: gitops-test-env
+#          tokenRef:
+#            secretName: repo-3066764709
+#            key: password
+          labels:
+            - preview
+        requeueAfterSeconds: 60 # later maybe 15?
+  template:
+    metadata:
+      name: 'preview-environment-{{branch}}-{{number}}'
+    spec:
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'preview-{{branch_slug}}-{{number}}'
+      project: default
+      source:
+        repoURL: https://github.com/lukma99/gitops-test-env.git
+        targetRevision: '{{head_sha}}'
+        path: k8s-deployments/05-preview-environments/overlays/preview
+        kustomize:
+          namespace: preview-{{branch_slug}}-{{number}}
+          nameSuffix: {{branch}}
+          commonLabels:
+            app.kubernetes.io/instance: {{branch_slug}}-{{number}}
+          images:
+            - newTag: {{head_sha}} # DIESES IMAGE IN PIPELINE BAUEN
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: true
