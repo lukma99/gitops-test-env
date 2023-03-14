@@ -15,7 +15,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'workflow_dispatch' || !(startsWith(github.ref, 'refs/heads/renovate')) }}
+    if: ${{ github.event_name == 'workflow_dispatch' || !(startsWith(github.event.pull_request.head.ref, 'refs/heads/renovate')) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -24,7 +24,9 @@ jobs:
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          TEST:  ${{ github.event.pull_request.head.ref }}
         run: |
+          echo "$TEST"
           echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
 
       - name: Build Docker Image (Manual Action Run)
