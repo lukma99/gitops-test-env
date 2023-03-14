@@ -11,8 +11,8 @@ spec:
           owner: lukma99
           repo: gitops-test-env
           tokenRef:
-            secretName: github-token
-            key: token
+            secretName: github-repo-creds
+            key: password
           labels:
             - preview
   template:

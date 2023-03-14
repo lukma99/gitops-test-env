@@ -21,6 +21,8 @@ if ! command -v k3d >/dev/null 2>&1; then
   exit 1
 fi
 
+
+
 if ! k3d cluster get release-promotion-cluster >/dev/null 2>&1; then
   echo "Creating cluster release-promotion-cluster"
   k3d cluster create release-promotion-cluster \
@@ -48,6 +50,23 @@ kubectl create namespace staging
 kubectl create namespace qa
 kubectl create namespace prod
 kubectl create namespace argocd
+
+echo
+echo -n "Enter your GitHub Token or press Enter to skip this step:"
+read -r -s GH_TOKEN
+echo
+if [[ $GH_TOKEN != "" ]]; then
+  kubectl delete secret github-repo-creds --namespace argocd
+  kubectl create secret generic github-repo-creds --namespace argocd \
+    --from-literal=type="git" \
+    --from-literal=url="https://github.com/lukma99/gitops-test-env" \
+    --from-literal=username="lukma99" \
+    --from-literal=password="$GH_TOKEN"
+  kubectl label secret github-repo-creds -n argocd argocd.argoproj.io/secret-type=repository
+else
+  echo "Skipping creation of GitHub connection and secrets."
+fi
+
 
 echo "Installing Argo CD"
 helm repo add argo https://argoproj.github.io/argo-helm
