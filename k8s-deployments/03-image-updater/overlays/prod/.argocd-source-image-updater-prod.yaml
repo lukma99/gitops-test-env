@@ -1,3 +1,0 @@
-kustomize:
-  images:
-  - ghcr.io/lukma99/gitops-test-env:2.1.2
