@@ -8,6 +8,9 @@ on:
         description: 'Docker Tag'
         required: true
         type: string
+  pull_request:
+    branches:    
+      - main
 
 jobs:
   build-and-push:
@@ -23,7 +26,9 @@ jobs:
         run: |
           echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
 
-      - name: Build and Push Docker Image
+      - name: Build Docker Image (Manual Action Run)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        #if: ${{ github.ref == 'refs/heads/main' }}
         env:
           IMAGE_NAME: ${{ github.repository }}
           IMAGE_TAG: ${{ inputs.docker_tag }}
@@ -33,4 +38,20 @@ jobs:
             --tag ghcr.io/${IMAGE_NAME}:latest \
             --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
             ./app
+            
+      - name: Build Docker Image (Pull Request)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+            --tag ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
+            --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
+            ./app
+          
+      - name: Push Docker Image
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+        run: |
           docker push --all-tags ghcr.io/${IMAGE_NAME}
