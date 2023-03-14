@@ -14,7 +14,7 @@ spec:
             - preview
   template:
     metadata:
-      name: 'preview-environment-{{branch}}-{{number}}'
+      name: 'preview-environment-{{branch_slug}}-{{number}}'
     spec:
       destination:
         server: https://kubernetes.default.svc
