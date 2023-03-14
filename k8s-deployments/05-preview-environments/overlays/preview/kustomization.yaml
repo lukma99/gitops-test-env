@@ -14,6 +14,6 @@ patchesStrategicMerge:
   - replicas.yaml
   - service.yaml
 
-images:
-  - name: ghcr.io/lukma99/gitops-test-env
+#images:
+#  - name: ghcr.io/lukma99/gitops-test-env
 #    newTag: 2.1.1
