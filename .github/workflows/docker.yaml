@@ -15,7 +15,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'workflow_dispatch' || !(startsWith(github.event.pull_request.head.ref, 'refs/heads/renovate')) }}
+    if: ${{ github.event_name == 'workflow_dispatch' || !(startsWith(github.event.pull_request.head.ref, 'renovate/')) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
