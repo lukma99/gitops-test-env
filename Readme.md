@@ -13,6 +13,16 @@
   * [k3d](https://k3d.io/v5.4.8/#installation) (version 5.x)
 
 ### Installation Steps
+* Fork this repository
+* Clone your fork
+* **In the root path** of the cloned fork, run the following command _(renames all occurences of the original repository or ghcr to yours)_:
+```bash
+# your github username in lowercase (e.g.: your name is FooBar, then type in GH_USER_NAME=foobar)
+GH_USER_NAME=<your-github-user-name>
+grep -rl --exclude-dir=.git lukma99 . | xargs sed -i "s/lukma99/${GH_USER_NAME}/g"
+```
+* Go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and click on `Generate new token (Classic)`. Give it the following scopes, save it and copy your generated token (we will need it in the next few steps):
+![](docs/pics/gh_token_scopes.png)
 * Under [https://github.com/USERNAME/gitops-test-env/settings/actions](https://github.com/USERNAME/gitops-test-env/settings/actions)
 ![](docs/pics/gh_actions_settings.png)
-* Nach erster Pipeline Docker Image Push das Registry auf public stellen
+* After the first pipeline run of "Docker Image Push", change the ghcr visibility to `public`
