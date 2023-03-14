@@ -22,15 +22,15 @@ spec:
       project: default
       source:
         repoURL: https://github.com/lukma99/gitops-test-env.git
-        path: k8s-deployments/05-preview-environments/overlays/preview
+        path: k8s-deployments/05-preview-environments/overlays/test
         targetRevision: '{{head_sha}}'
-        kustomize:
-          namespace: preview-{{branch_slug}}-{{number}}
-          nameSuffix: {{branch}}
-          commonLabels:
-            app.kubernetes.io/instance: {{branch_slug}}-{{number}}
-          images:
-            - 'ghcr.io/lukma99/gitops-test-env:{{head_sha}}' # DIESES IMAGE IN PIPELINE BAUEN
+#        kustomize:
+#          namespace: preview-{{branch_slug}}-{{number}}
+#          nameSuffix: {{branch}}
+#          commonLabels:
+#            app.kubernetes.io/instance: {{branch_slug}}-{{number}}
+#          images:
+#            - 'ghcr.io/lukma99/gitops-test-env:{{head_sha}}' # DIESES IMAGE IN PIPELINE BAUEN
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
