@@ -10,6 +10,9 @@ spec:
         github:
           owner: lukma99
           repo: gitops-test-env
+          tokenRef:
+            secretName: github-token
+            key: token
           labels:
             - preview
   template:
@@ -26,7 +29,7 @@ spec:
         targetRevision: '{{head_sha}}'
         kustomize:
           #namespace: 'preview-{{branch_slug}}-{{number}}'
-          nameSuffix: '{{branch}}'
+          nameSuffix: '-{{branch_slug}}'
           commonLabels:
             app.kubernetes.io/instance: '{{branch_slug}}-{{number}}'
           images:
