@@ -10,6 +10,9 @@ spec:
         github:
           owner: lukma99
           repo: gitops-test-env
+          tokenRef:
+            secretName: github-token
+            key: token
           labels:
             - preview
   template:
