@@ -28,7 +28,7 @@ spec:
         path: k8s-deployments/05-preview-environments/overlays/preview
         targetRevision: '{{head_sha}}'
         kustomize:
-          #namespace: 'preview-{{branch_slug}}-{{number}}'
+          #namespace: 'preview-{{branch_slug}}-{{number}}' # feature kommt in argo cd 2.7
           nameSuffix: '-{{branch_slug}}'
           commonLabels:
             app.kubernetes.io/instance: '{{branch_slug}}-{{number}}'
