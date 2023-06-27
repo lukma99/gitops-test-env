@@ -63,27 +63,27 @@ Argo CD:
 * [`http://localhost:8080/argocd`](http://localhost:8080/argocd)
 
 Manual Deployment:
-* Dev: [`http://localhost:8080`](http://localhost:8080)
-* Staging: [`http://localhost:8080`](http://localhost:8080)
-* Prod: [`http://localhost:8080`](http://localhost:8080)
+* Dev: [`http://localhost:8080/manual-dev`](http://localhost:8080/manual-dev)
+* Staging: [`http://localhost:8080/manual-staging`](http://localhost:8080/manual-staging)
+* Prod: [`http://localhost:8080/manual-prod`](http://localhost:8080/manual-prod)
 
 
 CI-Pipeline Deployment:
-* Dev: [`http://localhost:8080`](http://localhost:8080)
-* Staging: [`http://localhost:8080`](http://localhost:8080)
-* Prod: [`http://localhost:8080`](http://localhost:8080)
+* Dev: [`http://localhost:8080/ci-pipeline-dev`](http://localhost:8080/ci-pipeline-dev)
+* Staging: [`http://localhost:8080/ci-pipeline-staging`](http://localhost:8080/ci-pipeline-staging)
+* Prod: [`http://localhost:8080/ci-pipeline-prod`](http://localhost:8080/ci-pipeline-prod)
 
 
 Image-Updater Deployment:
-* Dev: [`http://localhost:8080`](http://localhost:8080)
-* Staging: [`http://localhost:8080`](http://localhost:8080)
-* Prod: [`http://localhost:8080`](http://localhost:8080)
+* Dev: [`http://localhost:8080/image-updater-dev`](http://localhost:8080/image-updater-dev)
+* Staging: [`http://localhost:8080/image-updater-staging`](http://localhost:8080/image-updater-staging)
+* Prod: [`http://localhost:8080/image-updater-prod`](http://localhost:8080/image-updater-prod)
 
 
 Dependency-Bot Deployment:
-* Dev: [`http://localhost:8080`](http://localhost:8080)
-* Staging: [`http://localhost:8080`](http://localhost:8080)
-* Prod: [`http://localhost:8080`](http://localhost:8080)
+* Dev: [`http://localhost:8080/dependency-bot-dev`](http://localhost:8080/dependency-bot-dev)
+* Staging: [`http://localhost:8080/dependency-bot-staging`](http://localhost:8080/dependency-bot-staging)
+* Prod: [`http://localhost:8080/dependency-bot-prod`](http://localhost:8080/dependency-bot-prod)
 
 
 Preview-Environments:
