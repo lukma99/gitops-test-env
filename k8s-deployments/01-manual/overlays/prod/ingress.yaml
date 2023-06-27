@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: manual
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /manual-prod(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: manual-prod
+                port:
+                  number: 3000

@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: image-updater
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /image-updater-staging(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: image-updater-staging
+                port:
+                  number: 3000

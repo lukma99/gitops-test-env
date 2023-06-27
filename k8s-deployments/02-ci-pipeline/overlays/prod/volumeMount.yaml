@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ci-pipeline
+spec:
+  template:
+    spec:
+      volumes:
+        - name: configmap
+          configMap:
+            name: ci-pipeline-prod

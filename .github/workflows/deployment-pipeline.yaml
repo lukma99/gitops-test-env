@@ -1,0 +1,160 @@
+name: Deployment Pipeline with PRs
+
+on:
+  # run pipeline manually
+  workflow_dispatch:
+    inputs:
+      docker_tag:
+        description: 'Docker Tag'
+        required: true
+        type: string
+      dev:
+        description: 'Open PR for dev'
+        required: true
+        type: boolean
+      staging:
+        description: 'Open PR for staging'
+        required: true
+        type: boolean
+      prod:
+        description: 'Open PR for prod'
+        required: true
+        type: boolean
+  workflow_run:
+    workflows: [ "Build and Push Docker Image" ]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Code for this script from this guide: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
+      - name: Get image name from build pipeline
+        uses: actions/github-script@v6
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          script: |
+            let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: context.payload.workflow_run.id,
+            });
+            let matchArtifact = allArtifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "image_tag"
+            })[0];
+            let download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            let fs = require('fs');
+            fs.writeFileSync(`${process.env.GITHUB_WORKSPACE}/image_tag.zip`, Buffer.from(download.data));
+
+      - name: Unzip artifact
+        run: unzip image_tag.zip
+
+      - name: Export Image name
+        id: export-image-name
+        uses: actions/github-script@v6
+        if: ${{ github.event_name == 'workflow_run' }}
+        with:
+          result-encoding: string
+          script: |
+            let fs = require('fs');
+            let image_tag = fs.readFileSync('./image_tag', {encoding:'utf8', flag:'r'});
+            // replace new-lines from file
+            image_tag = image_tag.replace(/(\r\n|\n|\r)/gm, "");
+            console.log("Image Tag: " + image_tag)
+            return image_tag
+
+      - name: Get result
+        run: echo "${{steps.export-image-name.outputs.result}}"
+
+      # step für yq dev
+      # step für yq staging
+      # step für yq prod
+      # step für branch und PR dev
+      # step für branch und PR staging
+      # step für branch und PR prod
+
+      # git config user.name "GitHub Actions Bot"
+      # git config user.email "<>"
+      # git checkout -b pipeline/update_prod
+      # yq -i ".images[0].newTag = $VERSION" ./k8s-deployments/02-ci-pipeline/overlays/prod/kustomization.yaml
+      # git add ./k8s-deployments/02-ci-pipeline/overlays/prod/kustomization.yaml
+      # git commit -m "update prod tag to $VERSION"
+      # git push -u origin pipeline/update_prod
+      - name: update image tags and open PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_TAG: ${{steps.export-image-name.outputs.result}}
+        run: |
+          # Configure Git User
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          
+          # Repeat everything frome here for all three stages
+          for STAGE in dev staging prod
+          do
+            # Get latest state and create a new branch for changes
+            git checkout main
+            git fetch origin
+            git pull
+            # "|| true", so that the task does not fail if the branch already exists / does not exist yet, depending on the command
+            git switch pipeline/update_$STAGE || true
+            git checkout -b pipeline/update_$STAGE || true
+            git branch --set-upstream-to=origin/pipeline/update_$STAGE || true
+            git pull --rebase || true
+            
+            # Change Tag
+            yq -i ".images[0].newTag = \"${IMAGE_TAG}\"" ./k8s-deployments/02-ci-pipeline/overlays/$STAGE/kustomization.yaml
+            
+            # Add and Push Changes to GitHub
+            git add ./k8s-deployments/02-ci-pipeline/overlays/$STAGE/kustomization.yaml
+            git commit -m "[GitHub Action] $STAGE: Update tag for ${IMAGE_NAME} to ${IMAGE_TAG}"
+            git push -u origin pipeline/update_$STAGE
+            
+            # Create PR
+            # "|| true", so that task does not fail, if the PR already exists
+            gh pr create -B main -H pipeline/update_$STAGE --title "(GitHub Action) $STAGE: Update ${IMAGE_NAME} Docker tag" --body "(GitHub Action) $STAGE: Update ${IMAGE_NAME} Docker tag" || true
+          done
+
+#  pr-for-dev:
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      - name: Login to Docker Registry
+#        env:
+#          REGISTRY_USER: ${{ github.actor }}
+#          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
+#
+#      - name: Build and Push Docker Image
+#        env:
+#          IMAGE_NAME: ${{ github.repository }}
+#          IMAGE_TAG: ${{ inputs.docker_tag }}
+#        run: |
+#          docker build \
+#            --tag ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
+#            --tag ghcr.io/${IMAGE_NAME}:latest \
+#            --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
+#            ./app
+#          docker push --all-tags ghcr.io/${IMAGE_NAME}
+#
+#      - name: Create dev PR
+#        if: ${{inputs.dev}} == 'true'
+#        env:
+#          IMAGE_NAME: ${{ github.repository }}
+#          IMAGE_TAG: ${{ inputs.docker_tag }}
+#        run: |
+#          git checkout -b dev_${IMAGE_NAME}

@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-updater
+spec:
+  template:
+    spec:
+      volumes:
+        - name: configmap
+          configMap:
+            name: image-updater-dev

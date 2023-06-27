@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ci-pipeline-staging
+  namespace: argocd
+spec:
+  destination:
+    namespace: staging
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/lukma99/gitops-test-env
+    path: k8s-deployments/02-ci-pipeline/overlays/staging
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

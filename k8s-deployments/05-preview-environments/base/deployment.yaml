@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preview-environment
+spec:
+  replicas: SPECIFIED_BY_OVERLAYS
+  template:
+    spec:
+      containers:
+        - name: gitops-test-env
+          image: ghcr.io/lukma99/gitops-test-env:SPECIFIED_BY_OVERLAYS
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: configmap
+              mountPath: "/usr/src/app/configmap"
+              readOnly: true
+      volumes:
+        - name: configmap
+          configMap:
+            name: preview-environment

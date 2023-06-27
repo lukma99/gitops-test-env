@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: image-updater-dev
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: gitops-test-env=ghcr.io/lukma99/gitops-test-env
+    argocd-image-updater.argoproj.io/gitops-test-env.update-strategy: semver
+    argocd-image-updater.argoproj.io/write-back-method: git
+spec:
+  destination:
+    namespace: dev
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/lukma99/gitops-test-env
+    path: k8s-deployments/03-image-updater/overlays/dev
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

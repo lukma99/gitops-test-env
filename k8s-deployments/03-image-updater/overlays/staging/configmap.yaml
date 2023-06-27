@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: image-updater
+data:
+  cm.yaml: |
+    app-name: image-updater-staging
+    using-method: image-updater
+    anotherkey: anothervalue

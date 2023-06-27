@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: preview-environment
+spec:
+  rules:
+    - http:
+        paths:
+          - path: to_be_replaced_by_annotation
+            pathType: Prefix
+            backend:
+              service:
+                name: preview-environment
+                port:
+                  number: 3000

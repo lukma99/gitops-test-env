@@ -1,0 +1,10 @@
+source:
+  kind: Namespace
+  name: temp-namespace
+  fieldPath: metadata.annotations.app/param-namespace
+targets:
+  - select:
+      kind: Namespace
+      name: temp-namespace
+    fieldPaths:
+      - metadata.name

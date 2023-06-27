@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ci-pipeline
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /ci-pipeline-staging(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: ci-pipeline-staging
+                port:
+                  number: 3000

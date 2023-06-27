@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: preview-environments-appset
+  namespace: argocd
+spec:
+  generators:
+    - pullRequest:
+        requeueAfterSeconds: 15
+        github:
+          owner: lukma99
+          repo: gitops-test-env
+          tokenRef:
+            secretName: github-repo-creds
+            key: password
+          labels:
+            - preview
+  template:
+    metadata:
+      name: 'preview-environment-{{branch_slug}}-{{number}}' # Guarantee uniqueness by combining name of branch and PR number
+    spec:
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'preview-{{branch_slug}}-{{number}}'
+      project: default
+      source:
+        repoURL: https://github.com/lukma99/gitops-test-env.git
+        path: k8s-deployments/05-preview-environments/overlays/preview
+        targetRevision: '{{head_sha}}'
+        kustomize:
+          commonLabels:
+            app.kubernetes.io/instance: '{{branch_slug}}-{{number}}'
+          commonAnnotations: # Path for URL and Namespace have to be delegated by Kustomize Replacement mechanism
+            app/param-path: /preview-{{branch_slug}}-{{number}}(/|$)(.*)
+            app/param-namespace: preview-{{branch_slug}}-{{number}}
+          images:
+            - 'ghcr.io/lukma99/gitops-test-env:{{head_sha}}' # This image is created on opening a feature PR
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

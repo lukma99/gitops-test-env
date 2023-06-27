@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dependency-bot
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /dependency-bot-prod(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: dependency-bot-prod
+                port:
+                  number: 3000

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dependency-bot
+data:
+  cm.yaml: |
+    app-name: dependency-bot-prod
+    using-method: dependency-bot
+    anotherkey: anothervalue

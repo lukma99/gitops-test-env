@@ -1,0 +1,10 @@
+source:
+  kind: Ingress
+  name: preview-environment
+  fieldPath: metadata.annotations.app/param-path
+targets:
+  - select:
+      kind: Ingress
+      name: preview-environment
+    fieldPaths:
+      - spec.rules.0.http.paths.0.path
