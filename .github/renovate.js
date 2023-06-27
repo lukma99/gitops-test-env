@@ -9,7 +9,7 @@ module.exports = {
     "repositories": [
         "lukma99/gitops-test-env"
     ],
-    "prHourlyLimit": 0
+    "prHourlyLimit": 0,
     "additionalBranchPrefix": "{{parentDir}}-",
     "commitMessagePrefix": "(Renovate) {{parentDir}}: ",
     "enabledManagers": ["kustomize"],
