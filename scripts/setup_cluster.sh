@@ -121,12 +121,17 @@ helm upgrade --install \
   argocd-image-updater argo/argocd-image-updater >/dev/null 2>&1
 #--set config.argocd.serverAddress=argo-cd-argocd-server.argocd.svc.cluster.local \
 #--set config.argocd.insecure=true \
+echo "Finished running Helm install."
 
-sleep 3
+
+echo "Waiting for Ingress-Nginx to be ready before applying Argo CD Ingress"
+kubectl wait pods -n kube-system -l app.kubernetes.io/name=ingress-nginx --for condition=Ready --timeout=90s
+echo "Waiting for Argo CD to be ready before applying Argo CD Ingress"
+kubectl wait pods -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready --timeout=90s
+
 
 kubectl apply -f ./scripts/ingress.yaml
 kubectl apply -f ./argocd/control-app.yaml
-echo "Finished running Helm install."
 
 
 echo
