@@ -15,7 +15,7 @@ app.get('/', function (req, res) {
         console.log(e)
     }
 
-    let result = `<h1>Hello from ${configmap['app-name'] || 'Kubernetes'}!</h1>
+    let result = `<h1>PREVIEW ENV! Hello from ${configmap['app-name'] || 'Kubernetes'}!</h1>
 <h2>You are running version ${process.env.APP_VERSION || '"Undefined"'}</h2>
 <h2>The following values are included in the configmap:</h2>`
 
