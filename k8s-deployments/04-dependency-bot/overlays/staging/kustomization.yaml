@@ -18,4 +18,4 @@ patchesStrategicMerge:
 
 images:
   - name: ghcr.io/lukma99/gitops-test-env
-    newTag: 1.0.0
+    newTag: 1.0.4
