@@ -1,25 +1,6 @@
 name: Deployment Pipeline with PRs
 
 on:
-  # run pipeline manually
-  workflow_dispatch:
-    inputs:
-      docker_tag:
-        description: 'Docker Tag'
-        required: true
-        type: string
-      dev:
-        description: 'Open PR for dev'
-        required: true
-        type: boolean
-      staging:
-        description: 'Open PR for staging'
-        required: true
-        type: boolean
-      prod:
-        description: 'Open PR for prod'
-        required: true
-        type: boolean
   workflow_run:
     workflows: [ "Build and Push Docker Image" ]
     types:
@@ -76,23 +57,9 @@ jobs:
       - name: Get result
         run: echo "${{steps.export-image-name.outputs.result}}"
 
-      # step für yq dev
-      # step für yq staging
-      # step für yq prod
-      # step für branch und PR dev
-      # step für branch und PR staging
-      # step für branch und PR prod
-
-      # git config user.name "GitHub Actions Bot"
-      # git config user.email "<>"
-      # git checkout -b pipeline/update_prod
-      # yq -i ".images[0].newTag = $VERSION" ./k8s-deployments/02-ci-pipeline/overlays/prod/kustomization.yaml
-      # git add ./k8s-deployments/02-ci-pipeline/overlays/prod/kustomization.yaml
-      # git commit -m "update prod tag to $VERSION"
-      # git push -u origin pipeline/update_prod
       - name: update image tags and open PRs
         env:
-          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }} # Reuse RENOVATE_TOKEN to avoid needing multiple tokens
           IMAGE_NAME: ${{ github.repository }}
           IMAGE_TAG: ${{steps.export-image-name.outputs.result}}
         run: |
@@ -125,36 +92,3 @@ jobs:
             # "|| true", so that task does not fail, if the PR already exists
             gh pr create -B main -H pipeline/update_$STAGE --title "(GitHub Action) $STAGE: Update ${IMAGE_NAME} Docker tag" --body "(GitHub Action) $STAGE: Update ${IMAGE_NAME} Docker tag" || true
           done
-
-#  pr-for-dev:
-#    runs-on: ubuntu-22.04
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v3
-#
-#      - name: Login to Docker Registry
-#        env:
-#          REGISTRY_USER: ${{ github.actor }}
-#          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-#        run: |
-#          echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
-#
-#      - name: Build and Push Docker Image
-#        env:
-#          IMAGE_NAME: ${{ github.repository }}
-#          IMAGE_TAG: ${{ inputs.docker_tag }}
-#        run: |
-#          docker build \
-#            --tag ghcr.io/${IMAGE_NAME}:${IMAGE_TAG} \
-#            --tag ghcr.io/${IMAGE_NAME}:latest \
-#            --label "org.opencontainers.image.source=https://github.com/${IMAGE_NAME}" \
-#            ./app
-#          docker push --all-tags ghcr.io/${IMAGE_NAME}
-#
-#      - name: Create dev PR
-#        if: ${{inputs.dev}} == 'true'
-#        env:
-#          IMAGE_NAME: ${{ github.repository }}
-#          IMAGE_TAG: ${{ inputs.docker_tag }}
-#        run: |
-#          git checkout -b dev_${IMAGE_NAME}
