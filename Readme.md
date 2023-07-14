@@ -28,8 +28,8 @@ Follow all these steps in the exact order. You wil have to switch between GitHub
 fork a few times.
 
 ### In GitHub
-* Fork this repository
-* Go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and click on `Generate new token (Classic)`. Give it the following scopes, save it and copy your generated token (we will need it in the next few steps):
+* Fork this repository. Leave repository name as "gitops-test-env".
+* Go to [https://github.com/settings/tokens](https://github.com/settings/tokens) and click on `Generate new token (Classic)`. Give it the following scopes and any name, save it and copy your generated token (we will need it in the next few steps):
 ![gh_token_scopes.png](docs/pics/gh_token_scopes.png)
 * Go to [https://github.com/USERNAME/gitops-test-env/settings/secrets/actions](https://github.com/USERNAME/gitops-test-env/settings/secrets/actions) and create a `Repository secret` called `RENOVATE_TOKEN`. Use the previously generated Token as the value.
 * Go to [https://github.com/USERNAME/gitops-test-env/settings/actions](https://github.com/USERNAME/gitops-test-env/settings/actions) and set the following Actions settings:
@@ -37,23 +37,24 @@ fork a few times.
 
 ### On your computer
 * Clone your fork
-* **In the root path** of the cloned fork, run the following command _(renames all occurences of the original repository or ghcr to yours)_:
+* **In the root path of the cloned fork**, run the following command after adding your GitHub username in it _(renames all occurences of the original repository or ghcr to yours)_:
 ```bash
-# your github username in lowercase (e.g.: your name is FooBar, then type in GH_USER_NAME=foobar)
+# IMPORTANT NOTE:
+# write your github username here in lowercase (e.g.: your name is FooBar, then type in GH_USER_NAME=foobar)
 GH_USER_NAME=<your-github-user-name>
-grep -rl --exclude-dir=.git lukma99 . | xargs sed -i "s/lukma99/${GH_USER_NAME}/g"
+grep -rl --exclude-dir=.git --exclude=Readme.md --exclude=LICENSE lukma99 . | xargs sed -i "s/lukma99/${GH_USER_NAME}/g"
 ```
-* Go to `.github/renovate.js` and replace `username` and `gitAuthor` with your username/email
-* Commit and push your changes
+* Go to `.github/renovate.js` and manually replace the e-mail-address in `gitAuthor` with your own GitHub e-mail-address you use for commits.
+* Commit and push these changes
 
 ### In GitHub
 * Go to GitHub Actions and run the job `Build and Push Docker Image` with the tag `1.0.0` _(because all manifests are initially
-  set to this version)_
-* After the first pipeline run of `Build and Push Docker Image`, change the ghcr visibility to `public` here: [`https://github.com/users/USERNAME/packages/container/gitops-test-env/settings`](https://github.com/users/USERNAME/packages/container/gitops-test-env/settings)
+  set to this version)_. Don't worry that after the first run, the job `Deployment Pipeline with PRs` will start and fail. That is because there is nothing to change in the YAMLs yet, as `1.0.0` is already included in them.
 
 ### On your computer
+* Make sure port 8080 is not used by anything. If you must use another port, then change it at the top of `./scripts/setup_cluster.sh`. Remember that all following links will then also use this port.
 * **In the root path** of the cloned fork, run `./scripts/setup_cluster.sh`. This will install a local k3d cluster with Argo CD ready to use with this project. During the script it will ask you to enter your GitHub Username and previously generated token.
-* Go to [`http://localhost:8080/argocd`](http://localhost:8080/argocd). Wait a few minutes for first sync or press `Sync now`
+* Go to [`http://localhost:8080/argocd`](http://localhost:8080/argocd). Wait a few minutes for first sync or press `Sync now`. All applications should be deployed and are accessible with the links from the next section.
 
 
 # Accessing Argo CD and deployed applications
