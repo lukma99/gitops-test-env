@@ -5,8 +5,8 @@ on:
     workflows: ["Build and Push Docker Image"]
     types:
     - completed
-  schedule:
-    - cron: '0 * * * *'
+#  schedule:
+#    - cron: '0 * * * *'
 jobs:
   renovate:
     runs-on: ubuntu-22.04
