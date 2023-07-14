@@ -19,21 +19,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        
+      - name: Set reponame to lowercase and export as IMAGE_NAME
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Login to Docker Registry
         env:
           REGISTRY_USER: ${{ github.actor }}
           REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          TEST:  ${{ github.event.pull_request.head.ref }}
         run: |
-          echo "$TEST"
           echo $REGISTRY_PASSWORD | docker login ghcr.io -u $REGISTRY_USER --password-stdin
 
       - name: Build Docker Image (Manual Action Run)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         #if: ${{ github.ref == 'refs/heads/main' }}
         env:
-          IMAGE_NAME: ${{ github.repository }}
           IMAGE_TAG: ${{ inputs.docker_tag }}
         run: |
           docker build \
@@ -46,7 +47,6 @@ jobs:
       - name: Build Docker Image (Pull Request)
         if: ${{ github.event_name == 'pull_request' }}
         env:
-          IMAGE_NAME: ${{ github.repository }}
           IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
         run: |
           docker build \
@@ -57,7 +57,6 @@ jobs:
           
       - name: Push Docker Image
         env:
-          IMAGE_NAME: ${{ github.repository }}
           IMAGE_TAG: ${{ inputs.docker_tag }}
         run: |
           docker push --all-tags ghcr.io/${IMAGE_NAME}
