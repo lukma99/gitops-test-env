@@ -10,6 +10,8 @@ ARGO_HELM_CHART_VERSION=5.36.5
 ARGO_IMAGE_UPDATER_HELM_CHART_VERSION=0.9.1
 # Port over which to access ingresses in k3d cluster
 INGRESS_PORT=8080
+# Name of the k3d-cluster
+CLUSTER_NAME=release-promotion-cluster
 
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "kubectl binary not found. Please install it first."
@@ -33,9 +35,9 @@ echo
 echo
 
 
-if ! k3d cluster get release-promotion-cluster >/dev/null 2>&1; then
-  echo "Creating cluster release-promotion-cluster"
-  k3d cluster create release-promotion-cluster \
+if ! k3d cluster get ${CLUSTER_NAME} >/dev/null 2>&1; then
+  echo "Creating cluster ${CLUSTER_NAME}"
+  k3d cluster create ${CLUSTER_NAME} \
     --image rancher/k3s:${K3S_VERSION} \
     --k3s-arg "--disable=traefik@server:*" \
     --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
@@ -44,15 +46,15 @@ if ! k3d cluster get release-promotion-cluster >/dev/null 2>&1; then
 
   sleep 3
 else
-  echo "Cluster release-promotion-cluster already exists, skipping creation"
+  echo "Cluster ${CLUSTER_NAME} already exists, skipping creation"
 fi
 
-kubectl config set-context k3d-release-promotion-cluster
+kubectl config set-context k3d-${CLUSTER_NAME}
 
 # check if current context switched correctly to the new one, to prevent installation of Argo CD
 # in different clusters, when something went wrong
-if [[ $(kubectl config current-context) != "k3d-release-promotion-cluster" ]]; then
-  echo "Something went wrong. The current k8s context is not k3d-release-promotion-cluster"
+if [[ $(kubectl config current-context) != "k3d-${CLUSTER_NAME}" ]]; then
+  echo "Something went wrong. The current k8s context is not k3d-${CLUSTER_NAME}"
   exit 1
 fi
 
@@ -89,7 +91,7 @@ if [[ $GH_TOKEN != "" && $GH_USER_NAME != "" ]]; then
   kubectl delete secret github-repo-creds --namespace argocd >/dev/null 2>&1
   kubectl create secret generic github-repo-creds --namespace argocd \
     --from-literal=type="git" \
-    --from-literal=url="https://github.com/lukma99/gitops-test-env" \
+    --from-literal=url="https://github.com/tempaccount4711/gitops-test-env" \
     --from-literal=username="$GH_USER_NAME" \
     --from-literal=password="$GH_TOKEN"
   kubectl label secret github-repo-creds -n argocd argocd.argoproj.io/secret-type=repository >/dev/null 2>&1
