@@ -9,7 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -54,10 +54,10 @@ jobs:
             console.log("Image Tag: " + image_tag)
             return image_tag
 
-      - name: Get result
+      - name: Print Image name
         run: echo "${{steps.export-image-name.outputs.result}}"
 
-      - name: update image tags and open PRs
+      - name: Update image tags and open PRs
         env:
           GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }} # Reuse RENOVATE_TOKEN to avoid needing multiple tokens
           IMAGE_NAME: ${{ github.repository }}
