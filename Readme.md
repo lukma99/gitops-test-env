@@ -54,8 +54,12 @@ grep -rl --exclude-dir=.git --exclude=Readme.md --exclude=LICENSE lukma99 . | xa
 ### On your computer
 * Make sure port 8080 is not used by anything. If you must use another port, then change it at the top of `./scripts/setup_cluster.sh`. Remember that all following links will then also use this port.
 * **In the root path** of the cloned fork, run `./scripts/setup_cluster.sh`. This will install a local k3d cluster with Argo CD ready to use with this project. During the script it will ask you to enter your GitHub Username and previously generated token.
-* Go to [`http://localhost:8080/argocd`](http://localhost:8080/argocd). Wait a few minutes for first sync or press `Sync now`. All applications should be deployed and are accessible with the links from the next section.
+* Go to [`http://localhost:8080/argocd`](http://localhost:8080/argocd). Wait a few minutes for first sync or press `Sync now`. All applications should be deployed and are accessible with the links from the section [Accessing Argo CD and deployed applications](#accessing-argo-cd-and-deployed-applications).
 
+#### Argo CD Web-UI after first Refresh:
+![argo-web-ui.png](docs/pics/argo-web-ui.png)
+#### One of the deployed example apps (CI-Dev):
+![example-app.png](docs/pics/example-app.png)
 
 # Accessing Argo CD and deployed applications
 _Port can be changed by changing `INGRESS_PORT` in `./scripts/setup_cluster.sh`_
