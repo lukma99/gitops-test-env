@@ -123,22 +123,24 @@ helm upgrade --install \
   argo-cd argo/argo-cd >/dev/null 2>&1
 sleep 3
 echo "Finished running Helm install."
+echo
 
 
 echo "Installing Argo CD Image Updater..."
-echo
 echo "Running Helm install..."
 helm upgrade --install \
   --namespace argocd \
   --version ${ARGO_IMAGE_UPDATER_HELM_CHART_VERSION} \
   argocd-image-updater argo/argocd-image-updater >/dev/null 2>&1
 echo "Finished running Helm install."
+echo
 
 
-echo "Waiting for Ingress-Nginx to be ready before applying Argo CD Ingress"
+echo "Waiting for Ingress-Nginx to be ready before applying Argo CD Ingress..."
 kubectl wait pods -n kube-system -l app.kubernetes.io/name=ingress-nginx --for condition=Ready --timeout=90s
-echo "Waiting for Argo CD to be ready before applying Argo CD Ingress"
+echo "Waiting for Argo CD to be ready before applying Argo CD Ingress..."
 kubectl wait pods -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready --timeout=90s
+echo
 
 
 echo "Applying Argo CD Ingress and initial control-app Application"
