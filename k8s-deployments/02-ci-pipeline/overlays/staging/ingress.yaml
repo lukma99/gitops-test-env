@@ -6,7 +6,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /ci-pipeline-staging(/|$)(.*)
+          - path: /ci-pipeline-staging
             pathType: Prefix
             backend:
               service:

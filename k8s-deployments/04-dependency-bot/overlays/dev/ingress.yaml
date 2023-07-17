@@ -6,7 +6,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /dependency-bot-dev(/|$)(.*)
+          - path: /dependency-bot-dev
             pathType: Prefix
             backend:
               service:

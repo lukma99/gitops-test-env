@@ -6,7 +6,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /manual-staging(/|$)(.*)
+          - path: /manual-staging
             pathType: Prefix
             backend:
               service:

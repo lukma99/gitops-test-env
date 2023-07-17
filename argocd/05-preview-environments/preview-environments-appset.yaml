@@ -36,7 +36,7 @@ spec:
           commonLabels:
             app.kubernetes.io/instance: '{{branch_slug}}-{{number}}'
           commonAnnotations: # Path for URL and Namespace have to be delegated by Kustomize Replacement mechanism
-            app/param-path: /preview-{{branch_slug}}-{{number}}(/|$)(.*)
+            app/param-path: /preview-{{branch_slug}}-{{number}}
             app/param-namespace: preview-{{branch_slug}}-{{number}}
           images:
             - 'ghcr.io/lukma99/gitops-test-env:{{head_sha}}' # This image is created on opening a feature PR by GitHub Action

@@ -4,7 +4,7 @@ const fs = require('fs')
 const app = express()
 
 // index page
-app.get('/', function (req, res) {
+app.get('/*', function (req, res) {
     let configmap
 
     // read configmap file

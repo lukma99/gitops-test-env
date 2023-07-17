@@ -6,7 +6,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /image-updater-dev(/|$)(.*)
+          - path: /image-updater-dev
             pathType: Prefix
             backend:
               service:

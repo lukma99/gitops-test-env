@@ -6,7 +6,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /manual-dev(/|$)(.*)
+          - path: /manual-dev
             pathType: Prefix
             backend:
               service:
