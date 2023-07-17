@@ -13,4 +13,4 @@ patchesStrategicMerge:
   - configmap.yaml
 images:
   - name: ghcr.io/lukma99/gitops-test-env
-    newTag: 1.0.4
+    newTag: 1.0.0
