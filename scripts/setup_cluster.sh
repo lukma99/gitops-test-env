@@ -42,8 +42,6 @@ if ! k3d cluster get ${CLUSTER_NAME} >/dev/null 2>&1; then
     --image rancher/k3s:${K3S_VERSION} \
     --k3s-arg "--disable=traefik@server:*" \
     -p "${INGRESS_PORT}:80@loadbalancer"
-    # Remove following line after test:
-    #--k3s-arg "--service-node-port-range=8010-65535@servers:*" \
   sleep 3
 else
   echo "Cluster ${CLUSTER_NAME} already exists, skipping creation"
