@@ -44,8 +44,8 @@ fork a few times.
 GH_USER_NAME=<your-github-user-name>
 grep -rl --exclude-dir=.git --exclude=Readme.md --exclude=LICENSE lukma99 . | xargs sed -i "s/lukma99/${GH_USER_NAME}/g"
 ```
-* Go to `.github/renovate.js` and manually replace the e-mail-address in `gitAuthor` with your own GitHub e-mail-address you use for commits. If your GitHub username contains uppercase letters, then also correct the two occurrences of your username in this file. 
-* Commit and push these changes
+* Go to `.github/renovate.js` and manually replace the e-mail-address in `gitAuthor` with your own GitHub e-mail-address you use for commits. If your GitHub username contains uppercase letters, then also correct the two occurrences of your username in this file. Other than in the script, you must provide you username here as it appears in GitHub with possible uppercase letters.
+* Commit and push these changes.
 
 ### In GitHub
 * Go to GitHub Actions and run the job `Build and Push Docker Image` with the tag `1.0.0` _(because all manifests are initially
