@@ -67,6 +67,8 @@ _Port can be changed by changing `INGRESS_PORT` in `./scripts/setup_cluster.sh`_
 Argo CD:
 * [`http://localhost:8080/argocd`](http://localhost:8080/argocd)
 
+For the deployments, either click on the following links or find them by yourself on the Argo CD UI: Click on the application card -> Click on `APP DETAILS` -> Click on the link under `URLs`
+
 Manual Deployment:
 * Dev: [`http://localhost:8080/manual-dev`](http://localhost:8080/manual-dev)
 * Staging: [`http://localhost:8080/manual-staging`](http://localhost:8080/manual-staging)
