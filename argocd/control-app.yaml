@@ -1,3 +1,6 @@
+# Argo CD App-of-Apps
+# Recursively watches this argocd folder to deploy all other Argo CD applications which are
+# stored in the folder as well as the control-app itself, when something changes.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

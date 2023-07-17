@@ -1,3 +1,6 @@
+# These values will be added to a kubernetes configmap which is injected to a file
+# in the file system of the pods.
+# The NodeJS app the displays the values of the file in the NodeJS web app
 app-name: test
 mykey1: myvalue1
 mykey2: myvalue2

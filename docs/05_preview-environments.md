@@ -18,3 +18,4 @@ you only create a PR for new features.
 
 ### Destroying preview environment
 * When you merge the PR or reject and close it, the preview environment is destroyed
+* Delete the old branch for cleanup on the PR

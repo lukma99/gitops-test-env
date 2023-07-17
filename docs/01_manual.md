@@ -7,7 +7,7 @@ stages manually without the help of pipelines or other third party applications 
 ### Building and Pushing a new docker image
 ```shell
 REGISTRY_USER=YOURNAME
-REGISTRY_PASSWORD=YOURPASSWORD
+  REGISTRY_PASSWORD=YOURPASSWORD
 IMAGE_NAME=gitops-test-env
 IMAGE_TAG=X.Y.Z
 

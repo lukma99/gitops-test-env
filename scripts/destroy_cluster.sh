@@ -1,2 +1,4 @@
 #!/usr/bin/env bash
-k3d cluster delete release-promotion-cluster
+
+CLUSTER_NAME=release-promotion-cluster
+k3d cluster delete ${CLUSTER_NAME}

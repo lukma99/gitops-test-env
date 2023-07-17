@@ -13,51 +13,55 @@ INGRESS_PORT=8080
 # Name of the k3d-cluster
 CLUSTER_NAME=release-promotion-cluster
 
-if ! command -v kubectl >/dev/null 2>&1; then
-  echo "kubectl binary not found. Please install it first."
-  exit 1
-fi
-if ! command -v helm >/dev/null 2>&1; then
-  echo "helm binary not found. Please install it first."
-  exit 1
-fi
-if ! command -v k3d >/dev/null 2>&1; then
-  echo "k3d binary not found. Please install it first."
-  exit 1
-fi
+
+# Check if necessary tools are installed
+for TOOL in docker kubectl helm k3d
+do
+  if ! command -v $TOOL >/dev/null 2>&1; then
+    echo "$TOOL binary not found. Please install it first."
+    exit 1
+  fi
+done
 
 
-echo -n "Enter your GitHub Username (Necessary on first run! Press Enter to skip this step): "
+echo -n "You will now be asked for GitHub Username and Token. These will be stored into a kubernetes secret in your cluster. The secret is used by the tools to access your repository."
+echo
+echo -n "Enter your GitHub Username: "
 read -r GH_USER_NAME
-echo -n "Enter your GitHub Token (Necessary on first run! Press Enter to skip this step): "
+echo -n "Enter your GitHub Token (input redacted): "
 read -r -s GH_TOKEN
 echo
 echo
 
 
+# Create local k3d cluster only if it does not exist yet
 if ! k3d cluster get ${CLUSTER_NAME} >/dev/null 2>&1; then
   echo "Creating cluster ${CLUSTER_NAME}"
+  # traefik is disabled because ingress-nginx will be installed in the next steps as ingress-controller
   k3d cluster create ${CLUSTER_NAME} \
     --image rancher/k3s:${K3S_VERSION} \
     --k3s-arg "--disable=traefik@server:*" \
-    --k3s-arg "--service-node-port-range=8010-65535@servers:*" \
     -p "${INGRESS_PORT}:80@loadbalancer"
-  #-p "9000-9050:9000-9050@server:*"
-
+    # Remove following line after test:
+    #--k3s-arg "--service-node-port-range=8010-65535@servers:*" \
   sleep 3
 else
   echo "Cluster ${CLUSTER_NAME} already exists, skipping creation"
 fi
 
+
+# Set current kubernetes context explicitly to new context to ensure the following commands work on the new cluster
 kubectl config set-context k3d-${CLUSTER_NAME}
 
-# check if current context switched correctly to the new one, to prevent installation of Argo CD
+# Check if current context switched correctly to the new one, to prevent installation of Argo CD
 # in different clusters, when something went wrong
 if [[ $(kubectl config current-context) != "k3d-${CLUSTER_NAME}" ]]; then
   echo "Something went wrong. The current k8s context is not k3d-${CLUSTER_NAME}"
   exit 1
 fi
 
+
+# Operations on the cluster can only start, when it is up and running. This takes a short while, thus needing a wait loop
 echo "Waiting for cluster node to become ready..."
 until kubectl get nodes.metrics.k8s.io >/dev/null 2>&1; do
   sleep 2
@@ -65,6 +69,7 @@ until kubectl get nodes.metrics.k8s.io >/dev/null 2>&1; do
 done
 echo "Cluster node is ready."
 echo
+
 
 echo "Installing Ingress-Nginx..."
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -77,6 +82,7 @@ helm upgrade --install \
 echo "Finished running Helm install."
 echo
 
+
 echo "Creating namespaces..."
 kubectl create namespace dev
 kubectl create namespace staging
@@ -86,19 +92,23 @@ echo "Finished creating namespaces."
 echo
 
 
+# For faster debug reasons this step is skipped when nothing was typed in in the first step.
+# This skip only works, if the cluster and thus the secret was already initially created.
 if [[ $GH_TOKEN != "" && $GH_USER_NAME != "" ]]; then
   echo "Create GitHub connection and secret."
   kubectl delete secret github-repo-creds --namespace argocd >/dev/null 2>&1
   kubectl create secret generic github-repo-creds --namespace argocd \
     --from-literal=type="git" \
-    --from-literal=url="https://github.com/tempaccount4711/gitops-test-env" \
+    --from-literal=url="https://github.com/lukma99/gitops-test-env" \
     --from-literal=username="$GH_USER_NAME" \
     --from-literal=password="$GH_TOKEN"
+  # Label is needed for Argo CD so it notices the secret is intended for repositories.
   kubectl label secret github-repo-creds -n argocd argocd.argoproj.io/secret-type=repository >/dev/null 2>&1
 else
   echo "Skipping creation of GitHub connection and secret, because username/token not provided."
 fi
 echo
+
 
 echo "Installing Argo CD..."
 helm repo add argo https://argoproj.github.io/argo-helm
@@ -111,18 +121,17 @@ helm upgrade --install \
   --set configs.params."server\.insecure"=true \
   --set configs.params."server\.rootpath"=/argocd/ \
   argo-cd argo/argo-cd >/dev/null 2>&1
-
 sleep 3
+echo "Finished running Helm install."
 
-# --set server.service.type=NodePort \
-#--set server.service.nodePortHttp=9000 \
-#--set server.service.nodePortHttps=9001 \
+
+echo "Installing Argo CD Image Updater..."
+echo
+echo "Running Helm install..."
 helm upgrade --install \
   --namespace argocd \
   --version ${ARGO_IMAGE_UPDATER_HELM_CHART_VERSION} \
   argocd-image-updater argo/argocd-image-updater >/dev/null 2>&1
-#--set config.argocd.serverAddress=argo-cd-argocd-server.argocd.svc.cluster.local \
-#--set config.argocd.insecure=true \
 echo "Finished running Helm install."
 
 
@@ -132,8 +141,10 @@ echo "Waiting for Argo CD to be ready before applying Argo CD Ingress"
 kubectl wait pods -n argocd -l app.kubernetes.io/name=argocd-server --for condition=Ready --timeout=90s
 
 
+echo "Applying Argo CD Ingress and initial control-app Application"
 kubectl apply -f ./scripts/ingress.yaml
 kubectl apply -f ./argocd/control-app.yaml
+echo "Finished applying Argo CD Ingress and initial control-app Application"
 
 
 echo

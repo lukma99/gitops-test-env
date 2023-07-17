@@ -1,3 +1,5 @@
+# For Preview Environments a ApplicationSet is used, because the application for each pull request
+# must be created with dynamic information such as the number and the name of the pull request.
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -6,13 +8,16 @@ metadata:
 spec:
   generators:
     - pullRequest:
+        # Set the reconciliation time for watching PRs to 15 seconds to increase feedback times
         requeueAfterSeconds: 15
         github:
           owner: lukma99
           repo: gitops-test-env
+          # Use credentials even though it is a public repository to avoid rate limits by GitHub
           tokenRef:
             secretName: github-repo-creds
             key: password
+          # Only watch PRs with label "preview" to avoid creating a preview environment for ALL PRs
           labels:
             - preview
   template:
@@ -34,7 +39,7 @@ spec:
             app/param-path: /preview-{{branch_slug}}-{{number}}(/|$)(.*)
             app/param-namespace: preview-{{branch_slug}}-{{number}}
           images:
-            - 'ghcr.io/lukma99/gitops-test-env:{{head_sha}}' # This image is created on opening a feature PR
+            - 'ghcr.io/lukma99/gitops-test-env:{{head_sha}}' # This image is created on opening a feature PR by GitHub Action
       syncPolicy:
         automated:
           prune: true

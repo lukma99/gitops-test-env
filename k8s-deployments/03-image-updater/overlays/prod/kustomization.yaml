@@ -16,4 +16,5 @@ patchesStrategicMerge:
   - ingress.yaml
   - configmap.yaml
 
-# Image Name and Tag will is stored in ".argocd-source-image-updater-STAGE.yaml", so that Argo CD knows to pick it up
+# Image Name and Tag will is stored in ".argocd-source-image-updater-STAGE.yaml" instead of here,
+# so that Argo CD knows to pick it up and Image Updater can update the version using git-writeback

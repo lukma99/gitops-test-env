@@ -14,7 +14,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Code for this script from this guide: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
+      # Get the tag of the built docker image, which was uploaded by the docker.yaml Action as an artifact
+      # Code for the script in this step from this guide: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
       - name: Get image name from build pipeline
         uses: actions/github-script@v6
         with:
@@ -52,6 +53,7 @@ jobs:
             console.log("Image Tag: " + image_tag)
             return image_tag
 
+      # Check if image tag matches a regex for semver. Is used to avoid bringing preview environment SHA tags into main branch.
       - name: Print and check image tag
         id: check-image-tag
         uses: actions/github-script@v6

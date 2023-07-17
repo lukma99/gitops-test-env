@@ -1,3 +1,5 @@
+# For Preview Environments an additional namespace is recommended to have the environment seperated.
+# The name will be changed with the kustomize replacements mechanism by an annotation on the ressource.
 apiVersion: v1
 kind: Namespace
 metadata:

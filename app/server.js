@@ -15,6 +15,7 @@ app.get('/', function (req, res) {
         console.log(e)
     }
 
+    // Build the content of the index page
     let result = `<h1>Hello from ${configmap['app-name'] || 'Kubernetes'}!</h1>
 <h2>You are running version ${process.env.APP_VERSION || '"Undefined"'}</h2>
 <h2>The following values are included in the configmap:</h2>`
@@ -30,6 +31,7 @@ app.get('/', function (req, res) {
         result += `</table>`
     }
 
+    // send the content to the client
     res.send(result)
 })
 
