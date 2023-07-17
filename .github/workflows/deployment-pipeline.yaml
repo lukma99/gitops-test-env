@@ -17,7 +17,6 @@ jobs:
       # Code for this script from this guide: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
       - name: Get image name from build pipeline
         uses: actions/github-script@v6
-        if: ${{ github.event_name == 'workflow_run' }}
         with:
           script: |
             let allArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
@@ -40,10 +39,9 @@ jobs:
       - name: Unzip artifact
         run: unzip image_tag.zip
 
-      - name: Export Image name
-        id: export-image-name
+      - name: Export image tag
+        id: export-image-tag
         uses: actions/github-script@v6
-        if: ${{ github.event_name == 'workflow_run' }}
         with:
           result-encoding: string
           script: |
@@ -54,14 +52,29 @@ jobs:
             console.log("Image Tag: " + image_tag)
             return image_tag
 
-      - name: Print Image name
-        run: echo "${{steps.export-image-name.outputs.result}}"
+      - name: Print and check image tag
+        id: check-image-tag
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            let image_tag = "${{ steps.export-image-tag.outputs.result }}";
+            let semver_regex = new RegExp("^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\\+([0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*))?$");
+            console.log("Image Tag: " + image_tag)
+            if (semver_regex.test(image_tag)) {
+              console.log("Semver pattern valid. Continuing Pipeline.");
+              return "true"
+            } else {
+              console.log("No semver pattern from previous docker build. Skipping Pipeline.");
+              return "false"
+            }
 
       - name: Update image tags and open PRs
+        if: ${{ steps.check-image-tag.outputs.result == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }} # Reuse RENOVATE_TOKEN to avoid needing multiple tokens
           IMAGE_NAME: ${{ github.repository }}
-          IMAGE_TAG: ${{steps.export-image-name.outputs.result}}
+          IMAGE_TAG: ${{steps.export-image-tag.outputs.result}}
         run: |
           # Configure Git User
           git config user.name "GitHub Actions Bot"
