@@ -48,7 +48,7 @@ grep -rl --exclude-dir=.git --exclude=Readme.md --exclude=LICENSE lukma99 . | xa
 * Commit and push these changes.
 
 ### In GitHub
-* Go to GitHub Actions and run the job `Build and Push Docker Image` with the tag `1.0.0` _(because all manifests are initially
+* Go to GitHub Actions, allow them to be run, and run the job `Build and Push Docker Image` with the tag `1.0.0` _(because all manifests are initially
   set to this version)_. Don't worry that after the first run, the job `Deployment Pipeline with PRs` will start and fail. That is because there is nothing to change in the YAMLs yet, as `1.0.0` is already included in them.
 
 ### On your computer
